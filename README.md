@@ -248,3 +248,9 @@ python main.py --model deeplabv3plus_mobilenet --dataset cityscapes --enable_vis
 [1] [Rethinking Atrous Convolution for Semantic Image Segmentation](https://arxiv.org/abs/1706.05587)
 
 [2] [Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation](https://arxiv.org/abs/1802.02611)
+
+
+
+
+
+
