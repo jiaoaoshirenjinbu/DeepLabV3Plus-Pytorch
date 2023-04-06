@@ -349,11 +349,17 @@ def main():
         one_loop_end_time = 0
 
         cur_epochs += 1
+
+        start_time = time.time()
+        i = 0
         for (images, labels) in train_loader:
+            i += 1
+            print(f"average time for a loop:{(time.time()-start_time)/i}")
             # print("one loop of loading")
             # time
-            one_loop_start_time = time.time()
-            print(f"a new loop start, the time for loading images is:{one_loop_start_time-one_loop_end_time}")
+            # i += 1
+            # one_loop_start_time = time.time()
+            # print(f"a new loop start, the time for loading images is:{one_loop_start_time-one_loop_end_time}")
             #
             # cur_itrs += 1
             #
