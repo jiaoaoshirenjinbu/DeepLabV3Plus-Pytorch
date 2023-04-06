@@ -208,7 +208,16 @@ def validate(opts, model, loader, device, metrics, ret_samples_ids=None):
     return score, ret_samples
 
 
+#####
+# 运行时间
+import time
+#####
+
+
 def main():
+
+    start_time = time.time()
+    cur_time = start_time
     opts = get_argparser().parse_args()
     if opts.dataset.lower() == 'voc':
         opts.num_classes = 21
@@ -307,6 +316,11 @@ def main():
         model = nn.DataParallel(model)
         model.to(device)
 
+    # time
+    set_off_time = time.time()
+    print(f"加载完成时间：{set_off_time-cur_time}")
+    cur_time = set_off_time
+
     # ==========   Train Loop   ==========#
     vis_sample_id = np.random.randint(0, len(val_loader), opts.vis_num_samples,
                                       np.int32) if opts.enable_vis else None  # sample idxs for visualization
@@ -322,21 +336,78 @@ def main():
     interval_loss = 0
     while True:  # cur_itrs < opts.total_itrs:
         # =====  Train  =====
+
+        # time
+        cur_time = time.time()
+
         model.train()
+
+        # time
+        load_model_time = time.time()
+        print(f"模型加载时间：{load_model_time - cur_time}")
+        # time
+        one_loop_end_time = 0
+
         cur_epochs += 1
         for (images, labels) in train_loader:
+
+            # time
+            one_loop_start_time = time.time()
+            print(f"一个循环开始，加载图片所用时间：{one_loop_end_time-one_loop_start_time}")
+
             cur_itrs += 1
+
+            # time
+            cursor = time.time()
 
             images = images.to(device, dtype=torch.float32)
             labels = labels.to(device, dtype=torch.long)
 
+            # time
+            print(f"将图像存入显存所用时间：{time.time()-cursor}")
+
             optimizer.zero_grad()
+
+            # time
+            cursor = time.time()
+
             outputs = model(images)
+
+            # time
+            print(f"前向传播所用时间：{time.time() - cursor}")
+
+            # time
+            cursor = time.time()
+
             loss = criterion(outputs, labels)
+
+            # time
+            print(f"计算loss所用时间：{time.time() - cursor}")
+
+            # time
+            cursor = time.time()
+
             loss.backward()
+
+            # time
+            print(f"反向传播所用时间：{time.time() - cursor}")
+
+            # time
+            cursor = time.time()
+
             optimizer.step()
 
+            # time
+            print(f"优化所用时间：{time.time() - cursor}")
+
+            # time
+            cursor = time.time()
+
             np_loss = loss.detach().cpu().numpy()
+
+            # time
+            print(f"把loss从gpu复制到cpu所用时间：{time.time() - cursor}")
+
             interval_loss += np_loss
             if vis is not None:
                 vis.vis_scalar('Loss', cur_itrs, np_loss)
@@ -348,13 +419,29 @@ def main():
                 interval_loss = 0.0
 
             if (cur_itrs) % opts.val_interval == 0:
+
+                # time
+                cursor = time.time()
+
                 save_ckpt('checkpoints/latest_%s_%s_os%d.pth' %
                           (opts.model, opts.dataset, opts.output_stride))
+
+                # time
+                print(f"储存pth文件所用时间：{time.time() - cursor}")
+
                 print("validation...")
+
+                # time
+                cursor = time.time()
+
+
                 model.eval()
                 val_score, ret_samples = validate(
                     opts=opts, model=model, loader=val_loader, device=device, metrics=metrics,
                     ret_samples_ids=vis_sample_id)
+                # time
+                print(f"评估所用时间：{time.time() - cursor}")
+
                 print(metrics.to_str(val_score))
                 if val_score['Mean IoU'] > best_score:  # save best model
                     best_score = val_score['Mean IoU']
@@ -373,6 +460,9 @@ def main():
                         concat_img = np.concatenate((img, target, lbl), axis=2)  # concat along width
                         vis.vis_image('Sample %d' % k, concat_img)
                 model.train()
+                # time
+                one_loop_end_time = time.time()
+                print(f"一个循环所用时间：{one_loop_end_time-one_loop_start_time}")
             scheduler.step()
 
             if cur_itrs >= opts.total_itrs:
