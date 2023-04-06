@@ -318,7 +318,7 @@ def main():
 
     # time
     set_off_time = time.time()
-    print(f"加载完成时间：{set_off_time-cur_time}")
+    print(f"the time for loading off is:{set_off_time-cur_time}")
     cur_time = set_off_time
 
     # ==========   Train Loop   ==========#
@@ -344,7 +344,7 @@ def main():
 
         # time
         load_model_time = time.time()
-        print(f"模型加载时间：{load_model_time - cur_time}")
+        print(f"time for loading the model is:{load_model_time - cur_time}")
         # time
         one_loop_end_time = 0
 
