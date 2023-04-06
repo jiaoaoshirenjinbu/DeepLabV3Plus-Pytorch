@@ -245,10 +245,10 @@ def main():
 
     train_dst, val_dst = get_dataset(opts)
     train_loader = data.DataLoader(
-        train_dst, batch_size=opts.batch_size, shuffle=True, num_workers=2,
+        train_dst, batch_size=opts.batch_size, shuffle=True, num_workers=8,
         drop_last=True)  # drop_last=True to ignore single-image batches.
     val_loader = data.DataLoader(
-        val_dst, batch_size=opts.val_batch_size, shuffle=True, num_workers=2)
+        val_dst, batch_size=opts.val_batch_size, shuffle=True, num_workers=8)
     print("Dataset: %s, Train set: %d, Val set: %d" %
           (opts.dataset, len(train_dst), len(val_dst)))
 
@@ -350,10 +350,10 @@ def main():
 
         cur_epochs += 1
         for (images, labels) in train_loader:
-            print("one loop of loading")
-            # # time
-            # one_loop_start_time = time.time()
-            # print(f"a new loop start, the time for loading images is:{one_loop_start_time-one_loop_end_time}")
+            # print("one loop of loading")
+            # time
+            one_loop_start_time = time.time()
+            print(f"a new loop start, the time for loading images is:{one_loop_start_time-one_loop_end_time}")
             #
             # cur_itrs += 1
             #
@@ -461,7 +461,7 @@ def main():
             #             vis.vis_image('Sample %d' % k, concat_img)
             #     model.train()
             #     # time
-            # one_loop_end_time = time.time()
+            one_loop_end_time = time.time()
             # print(f"the total time for a loop is:{one_loop_end_time - one_loop_start_time}")
             # scheduler.step()
             #
