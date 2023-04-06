@@ -461,8 +461,8 @@ def main():
                         vis.vis_image('Sample %d' % k, concat_img)
                 model.train()
                 # time
-                one_loop_end_time = time.time()
-                print(f"the total time for a loop is:{one_loop_end_time-one_loop_start_time}")
+            one_loop_end_time = time.time()
+            print(f"the total time for a loop is:{one_loop_end_time - one_loop_start_time}")
             scheduler.step()
 
             if cur_itrs >= opts.total_itrs:
