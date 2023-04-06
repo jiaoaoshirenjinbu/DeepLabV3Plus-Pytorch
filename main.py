@@ -350,7 +350,7 @@ def main():
 
         cur_epochs += 1
         for (images, labels) in train_loader:
-
+            print("one loop of loading")
             # # time
             # one_loop_start_time = time.time()
             # print(f"a new loop start, the time for loading images is:{one_loop_start_time-one_loop_end_time}")
