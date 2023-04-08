@@ -34,7 +34,7 @@ def get_argparser():
     # Deeplab Options
     available_models = sorted(name for name in network.modeling.__dict__ if name.islower() and \
                               not (name.startswith("__") or name.startswith('_')) and callable(
-                              network.modeling.__dict__[name])
+        network.modeling.__dict__[name])
                               )
     parser.add_argument("--model", type=str, default='deeplabv3plus_mobilenet',
                         choices=available_models, help='model name')
@@ -235,11 +235,10 @@ def main():
         opts.val_batch_size = 1
 
     train_dst, val_dst = get_dataset(opts)
-    train_loader = data.DataLoader(
-        train_dst, batch_size=opts.batch_size, shuffle=True, num_workers=48,
-        drop_last=True)  # drop_last=True to ignore single-image batches.
+    train_loader = data.DataLoader(train_dst, batch_size=opts.batch_size, shuffle=True, num_workers=2, drop_last=True,
+                                   pin_memory=True)  # drop_last=True to ignore single-image batches.
     val_loader = data.DataLoader(
-        val_dst, batch_size=opts.val_batch_size, shuffle=True, num_workers=48)
+        val_dst, batch_size=opts.val_batch_size, shuffle=True, num_workers=2, pin_memory=True)
     print("Dataset: %s, Train set: %d, Val set: %d" %
           (opts.dataset, len(train_dst), len(val_dst)))
 
@@ -327,8 +326,8 @@ def main():
         for (images, labels) in train_loader:
             cur_itrs += 1
 
-            images = images.to(device, dtype=torch.float32)
-            labels = labels.to(device, dtype=torch.long)
+            images = images.to(device, dtype=torch.float32, non_blocking=True)
+            labels = labels.to(device, dtype=torch.long, non_blocking=True)
 
             optimizer.zero_grad()
             outputs = model(images)
