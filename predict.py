@@ -61,7 +61,7 @@ def get_argparser():
 def main():
     opts = get_argparser().parse_args()
     if opts.dataset.lower() == 'voc':
-        opts.num_classes = 21
+        opts.num_classes = 3
         decode_fn = VOCSegmentation.decode_target
     elif opts.dataset.lower() == 'cityscapes':
         opts.num_classes = 19
