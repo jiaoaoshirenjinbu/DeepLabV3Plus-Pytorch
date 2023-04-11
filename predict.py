@@ -28,6 +28,8 @@ def get_argparser():
                         help="path to a single image or image directory")
     parser.add_argument("--dataset", type=str, default='voc',
                         choices=['voc', 'cityscapes'], help='Name of training set')
+    parser.add_argument("--num_classes", type=int, default=None,
+                        help="num classes (default: None)")
 
     # Deeplab Options
     available_models = sorted(name for name in network.modeling.__dict__ if name.islower() and \
@@ -59,13 +61,14 @@ def get_argparser():
     return parser
 
 def main():
-    opts = get_argparser().parse_args()
-    if opts.dataset.lower() == 'voc':
-        opts.num_classes = 3
-        decode_fn = VOCSegmentation.decode_target
-    elif opts.dataset.lower() == 'cityscapes':
-        opts.num_classes = 19
-        decode_fn = Cityscapes.decode_target
+
+    # opts = get_argparser().parse_args()
+    # if opts.dataset.lower() == 'voc':
+    #     opts.num_classes = 21
+    #     decode_fn = VOCSegmentation.decode_target
+    # elif opts.dataset.lower() == 'cityscapes':
+    #     opts.num_classes = 19
+    #     decode_fn = Cityscapes.decode_target
 
     os.environ['CUDA_VISIBLE_DEVICES'] = opts.gpu_id
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
