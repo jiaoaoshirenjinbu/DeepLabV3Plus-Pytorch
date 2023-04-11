@@ -210,8 +210,9 @@ def validate(opts, model, loader, device, metrics, ret_samples_ids=None):
 
 def main():
 
+    opts = get_argparser().parse_args()
+
     # num_classes is a default parameter in modeling.py, code here could invalidate the prompt
-    # opts = get_argparser().parse_args()
     # if opts.dataset.lower() == 'voc':
     #     opts.num_classes = 21
     # elif opts.dataset.lower() == 'cityscapes':

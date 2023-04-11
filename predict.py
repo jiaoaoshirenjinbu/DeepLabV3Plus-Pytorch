@@ -62,7 +62,7 @@ def get_argparser():
 
 def main():
 
-    # opts = get_argparser().parse_args()
+    opts = get_argparser().parse_args()
     # if opts.dataset.lower() == 'voc':
     #     opts.num_classes = 21
     #     decode_fn = VOCSegmentation.decode_target
